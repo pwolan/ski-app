@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "917071677804",
+    "project_id": "ski-app-c27a7",
+    "storage_bucket": "ski-app-c27a7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:917071677804:android:fa8b0f5d85800c8f998b49",
+        "android_client_info": {
+          "package_name": "com.example.ski_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCz7N2ywCNeKJ3p8rKyHQvVaeDgrU9qvEA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

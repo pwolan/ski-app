@@ -5,7 +5,15 @@ import 'dart:convert'; // Do dekodowania CSV
 import 'models.dart';
 import 'package:logger/logger.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'firebase_options.dart'; // Wygenerowane przez flutterfire configure
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const SkiApp());
 }
 
@@ -31,11 +39,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // final sensorService = SensorService(); 
+  // final sensorService = SensorService();
   final model = MLModel();
   final logger = Logger();
 
-  List<List<double>>? _csvSensorData; 
+  List<List<double>>? _csvSensorData;
   String? _predictionResult;
   String? _fileName;
 
@@ -68,7 +76,7 @@ class _HomePageState extends State<HomePage> {
         }
         setState(() {
           _csvSensorData = loadedData;
-          _predictionResult = null; 
+          _predictionResult = null;
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Wczytano ${_csvSensorData!.length} wierszy danych z $_fileName')),
@@ -78,6 +86,24 @@ class _HomePageState extends State<HomePage> {
           SnackBar(content: Text('Błąd wczytywania pliku CSV: $e')),
         );
       }
+    }
+  }
+
+  Future<void> _addTestDocument() async {
+    try {
+      await FirebaseFirestore.instance.collection('test_collection').add({
+        'timestamp': FieldValue.serverTimestamp(),
+        'message': 'Hello from Flutter!',
+        'device': Platform.operatingSystem,
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Dodano dokument do test_collection')),
+      );
+    } catch (e) {
+      logger.e("Błąd Firestore: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Błąd zapisu do Firestore: $e')),
+      );
     }
   }
 
@@ -135,6 +161,12 @@ class _HomePageState extends State<HomePage> {
               ElevatedButton(
                 onPressed: _csvSensorData != null ? _performInference : null,
                 child: const Text('Wykonaj Predykcję na danych z CSV'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _addTestDocument,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+                child: const Text('Dodaj testowy dokument do Firestore'),
               ),
               const SizedBox(height: 30),
               Text(
