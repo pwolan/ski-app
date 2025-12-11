@@ -8,6 +8,7 @@ import 'package:logger/logger.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart'; // Wygenerowane przez flutterfire configure
+import 'camera_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -167,6 +168,17 @@ class _HomePageState extends State<HomePage> {
                 onPressed: _addTestDocument,
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
                 child: const Text('Dodaj testowy dokument do Firestore'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CameraScreen()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
+                child: const Text('Nagraj Wideo / Upload'),
               ),
               const SizedBox(height: 30),
               Text(

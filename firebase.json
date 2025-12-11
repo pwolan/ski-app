@@ -1,1 +1,16 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"ski-app-c27a7","appId":"1:917071677804:android:fa8b0f5d85800c8f998b49","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"ski-app-c27a7","configurations":{"android":"1:917071677804:android:fa8b0f5d85800c8f998b49"}}}}}}
+{
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "venv",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ],
+      "runtime": "python312"
+    }
+  ],
+  "flutter": {"platforms":{"android":{"default":{"projectId":"ski-app-c27a7","appId":"1:917071677804:android:fa8b0f5d85800c8f998b49","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"ski-app-c27a7","configurations":{"android":"1:917071677804:android:fa8b0f5d85800c8f998b49"}}}}}
+}
