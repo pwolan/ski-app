@@ -66,6 +66,29 @@ This project relies on Firebase for Storage, Firestore, and Cloud Functions.
     flutter run
     ```
 
+### Testing Cloud Functions Locally
+
+You can test the Cloud Functions and Firestore interactions locally using the Firebase Emulator Suite.
+
+1.  **Start the Emulators:**
+    This command starts local versions of Functions, Firestore, and Storage.
+    ```bash
+    firebase emulators:start
+    ```
+
+2.  **Access the Emulator UI:**
+    Open [http://localhost:4000](http://localhost:4000) in your browser.
+
+3.  **Trigger the Function:**
+    *   Go to the **Storage** tab in the Emulator UI.
+    *   Create a folder named `videos`.
+    *   Upload a video file (e.g., `test.mp4`) into the `videos` folder.
+
+4.  **Verify Results:**
+    *   Check the terminal logs where you ran `firebase emulators:start`. You should see "Processing started" and "Successfully saved results".
+    *   Go to the **Firestore** tab in the Emulator UI.
+    *   Look for the `video_results` collection. You should see a document with the same name as your video file, containing the processing results.
+
 ### Project Structure
 - `lib/`: Flutter application code.
     - `main.dart`: Entry point and Home Screen.
