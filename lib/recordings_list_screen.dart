@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'models.dart';
 import 'package:logger/logger.dart';
+import 'video_preview_screen.dart';
 
 class RecordingsListScreen extends StatefulWidget {
   final MLModel model;
@@ -48,10 +49,6 @@ class _RecordingsListScreenState extends State<RecordingsListScreen> {
                    throw Exception("Znaleziono ramkę z pustą listą punktów.");
                  }
 
-                 // Temporary hack: Truncate to 12 features
-                 if (features.length > 12) {
-                   features = features.sublist(0, 12);
-                 }
                  sequence.add(features);
              }
          } else if (frame is List) {
@@ -72,106 +69,28 @@ class _RecordingsListScreenState extends State<RecordingsListScreen> {
       }
 
       if (mounted) {
-        Navigator.of(context).pop(); 
-        _showDataInspectionDialog(sequence, doc.id);
-      }
-
-    } catch (e) {
-      if (mounted) {
-        Navigator.of(context).pop(); 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Błąd predykcji: ${e.toString().replaceAll('Exception: ', '')}')),
-        );
-        logger.e("Prediction error parsing doc ${doc.id}: $e");
-      }
-    }
-  }
-
-  void _showDataInspectionDialog(List<List<double>> sequence, String docId) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Dane wejściowe (${sequence.length} ramek)"),
-        content: SizedBox(
-          width: double.maxFinite,
-          height: 300,
-          child: ListView.builder(
-            itemCount: sequence.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text("Ramka $index"),
-                subtitle: Text(sequence[index].toString()),
-                dense: true,
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("Anuluj"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              _executeInference(sequence, docId);
-            },
-            child: const Text("Uruchom model"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _executeInference(List<List<double>> sequence, String docId) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const Center(child: CircularProgressIndicator()),
-    );
-
-    try {
-      String result = await widget.model.runInferenceOnSequence(sequence);
-
-      if (mounted) {
-        Navigator.of(context).pop(); 
-        _showResultDialog(result, docId);
-      }
-    } catch (e) {
-      if (mounted) {
-        Navigator.of(context).pop(); 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Błąd uruchamiania modelu: $e')),
-        );
-      }
-    }
-  }
-
-  void _showResultDialog(String result, String docId) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Wynik modelu"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("$docId", style: const TextStyle(fontSize: 12, color: Colors.grey)),
-            const SizedBox(height: 10),
-            Text(
-              result,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blueAccent),
+        Navigator.of(context).pop(); // Close loading dialog
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VideoPreviewScreen(
+              docId: doc.id,
+              sequence: sequence,
+              model: widget.model,
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("OK"),
           ),
-        ],
-      ),
-    );
+        );
+      }
+
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Błąd przygotowania danych: ${e.toString().replaceAll('Exception: ', '')}')),
+        );
+        logger.e("Data parsing error for doc ${doc.id}: $e");
+      }
+    }
   }
 
   @override
