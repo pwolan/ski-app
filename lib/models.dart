@@ -60,10 +60,11 @@ class MLModel {
     if (outputData.isEmpty) {
       return "Błąd, brak predykcji";
     }
-    double maxValue = outputData[0].reduce(
-      (curr, next) => curr > next ? curr : next,
+    List<double> probabilities = (outputData[0] as List).cast<double>();
+    double maxValue = probabilities.reduce(
+      (double curr, double next) => curr > next ? curr : next,
     );
-    int maxIndex = outputData[0].indexOf(maxValue);
+    int maxIndex = probabilities.indexOf(maxValue);
 
     return classes[maxIndex];
   }

@@ -99,7 +99,7 @@ class _CameraScreenState extends State<CameraScreen> {
       _logger.i("Processing video: ${ref.fullPath} - (Mock implementation)");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text('Video uploaded! Processing started...')),
+           SnackBar(content: Text('Wideo wysłane! Przetwarzanie rozpoczęte...')),
         );
       }
 
@@ -122,7 +122,7 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Nagraj Wideo')),
+      appBar: AppBar(title: const Text('Nagrywanie Wideo')),
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
@@ -145,7 +145,7 @@ class _CameraScreenState extends State<CameraScreen> {
                           CircularProgressIndicator(),
                           SizedBox(height: 16),
                           Text(
-                            "Uploading...",
+                            "Wysyłanie...",
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           )
                         ],
