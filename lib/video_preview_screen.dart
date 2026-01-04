@@ -3,6 +3,7 @@ import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:logger/logger.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'models.dart';
 
 class VideoPreviewScreen extends StatefulWidget {
@@ -85,7 +86,7 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
 
   Future<void> _runInference() async {
     _videoPlayerController?.pause();
-    
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -102,6 +103,15 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
       }).toList();
 
       String result = await widget.model.runInferenceOnSequence(modelInput);
+
+      try {
+        await FirebaseFirestore.instance
+            .collection('video_results')
+            .doc(widget.docId)
+            .update({'classification': result});
+      } catch (e) {
+        logger.e("Error updating Firestore with classification: $e");
+      }
 
       if (mounted) {
         Navigator.of(context).pop();
@@ -148,35 +158,112 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Podgląd nagrania")),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Center(
-              child: _isLoadingFn
-                  ? const CircularProgressIndicator()
-                  : _chewieController != null && _chewieController!.videoPlayerController.value.isInitialized
-                      ? Chewie(
-                          controller: _chewieController!,
-                        )
-                      : const Text("Nie udało się załadować wideo."),
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Center(
-              child: ElevatedButton.icon(
-                onPressed: _runInference,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('video_results')
+            .doc(widget.docId)
+            .snapshots(),
+        builder: (context, snapshot) {
+          String classificationText = "Klasyfikacja: brak";
+          if (snapshot.hasData && snapshot.data!.exists) {
+            final data = snapshot.data!.data() as Map<String, dynamic>?;
+            if (data != null && data.containsKey('classification')) {
+              classificationText = "Klasa: ${data['classification']}";
+            }
+          }
+
+          return Column(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Center(
+                  child: _isLoadingFn
+                      ? const CircularProgressIndicator()
+                      : _chewieController != null &&
+                              _chewieController!
+                                  .videoPlayerController.value.isInitialized
+                          ? Chewie(
+                              controller: _chewieController!,
+                            )
+                          : const Text("Nie udało się załadować wideo."),
                 ),
-                icon: const Icon(Icons.analytics),
-                label: const Text("Uruchom model", style: TextStyle(fontSize: 18)),
               ),
-            ),
-          ),
-        ],
+              Expanded(
+                flex: 1,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            classificationText,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.blueAccent),
+                            onPressed: () => _showEditClassDialog(),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton.icon(
+                        onPressed: _runInference,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 32, vertical: 16),
+                        ),
+                        icon: const Icon(Icons.analytics),
+                        label: const Text("Uruchom model",
+                            style: TextStyle(fontSize: 18)),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
+    );
+  }
+
+  void _showEditClassDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          title: const Text('Wybierz poprawną klasę'),
+          children: classes.map((String className) {
+            return SimpleDialogOption(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                try {
+                  await FirebaseFirestore.instance
+                      .collection('video_results')
+                      .doc(widget.docId)
+                      .update({'classification': className});
+                } catch (e) {
+                  logger.e("Error updating classification: $e");
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Błąd zapisu: $e')),
+                    );
+                  }
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(className, style: const TextStyle(fontSize: 16)),
+              ),
+            );
+          }).toList(),
+        );
+      },
     );
   }
 }
@@ -225,7 +312,7 @@ class SkeletonPainter extends CustomPainter {
 
     final double progress = currentTime.inMilliseconds / totalDuration.inMilliseconds;
     int frameIndex = (progress * (sequence.length - 1)).round();
-    
+
     if (frameIndex < 0) frameIndex = 0;
     if (frameIndex >= sequence.length) frameIndex = sequence.length - 1;
 
@@ -241,7 +328,7 @@ class SkeletonPainter extends CustomPainter {
         // Warning: Coordinates must be normalized 0..1 to work with * size
         double x = frameData[i];
         double y = frameData[i+1];
-        
+
         canvas.drawCircle(Offset(x * size.width, y * size.height), 4.0, paint);
       }
     }

@@ -124,10 +124,9 @@ class _RecordingsListScreenState extends State<RecordingsListScreen> {
               String name = data.containsKey('name')
                   ? data['name']
                   : '${doc.id.length > 23 ? doc.id.substring(0, 20) + "..." : doc.id}';
-              String subtitle = doc.id;
-              if (data.containsKey('timestamp')) {
-                  subtitle = "ID: ${doc.id}";
-              }
+              String subtitle = data.containsKey('classification')
+                  ? "Klasa: ${data['classification']}"
+                  : "Klasyfikacja: brak";
 
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
