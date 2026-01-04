@@ -44,7 +44,7 @@ class _RecordingsListScreenState extends State<RecordingsListScreen> {
              var points = frame['points'];
              if (points is List) {
                  List<double> features = points.map((e) => (e as num).toDouble()).toList();
-                 
+
                  if (features.isEmpty) {
                    throw Exception("Znaleziono ramkę z pustą listą punktów.");
                  }
@@ -53,7 +53,7 @@ class _RecordingsListScreenState extends State<RecordingsListScreen> {
              }
          } else if (frame is List) {
              List<double> features = frame.map((e) => (e as num).toDouble()).toList();
-             
+
              if (features.isEmpty) {
                 throw Exception("Znaleziono ramkę z pustą listą punktów.");
              }
@@ -121,8 +121,8 @@ class _RecordingsListScreenState extends State<RecordingsListScreen> {
             itemBuilder: (context, index) {
               var doc = snapshot.data!.docs[index];
               var data = doc.data() as Map<String, dynamic>;
-              String name = data.containsKey('name') 
-                  ? data['name'] 
+              String name = data.containsKey('name')
+                  ? data['name']
                   : '${doc.id.length > 23 ? doc.id.substring(0, 20) + "..." : doc.id}';
               String subtitle = doc.id;
               if (data.containsKey('timestamp')) {
@@ -135,7 +135,36 @@ class _RecordingsListScreenState extends State<RecordingsListScreen> {
                   leading: const Icon(Icons.video_file, color: Colors.blueAccent),
                   title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Text(subtitle),
-                  trailing: const Icon(Icons.play_arrow),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.play_arrow),
+                        onPressed: () => _runPrediction(doc),
+                      ),
+                      PopupMenuButton<String>(
+                        onSelected: (String value) {
+                          if (value == 'rename') {
+                            _renameRecording(doc, name);
+                          } else if (value == 'delete') {
+                            _deleteRecording(doc);
+                          }
+                        },
+                        itemBuilder: (BuildContext context) {
+                          return [
+                            const PopupMenuItem(
+                              value: 'rename',
+                              child: Text('Zmień nazwę'),
+                            ),
+                            const PopupMenuItem(
+                              value: 'delete',
+                              child: Text('Usuń', style: TextStyle(color: Colors.red)),
+                            ),
+                          ];
+                        },
+                      ),
+                    ],
+                  ),
                   onTap: () => _runPrediction(doc),
                 ),
               );
@@ -143,6 +172,68 @@ class _RecordingsListScreenState extends State<RecordingsListScreen> {
           );
         },
       ),
+    );
+  }
+
+  Future<void> _renameRecording(DocumentSnapshot doc, String currentName) async {
+    TextEditingController controller = TextEditingController(text: currentName);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Zmień nazwę'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(hintText: "Nowa nazwa"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Anuluj'),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (controller.text.isNotEmpty) {
+                  await FirebaseFirestore.instance
+                      .collection('video_results')
+                      .doc(doc.id)
+                      .update({'name': controller.text});
+                  if (context.mounted) Navigator.of(context).pop();
+                }
+              },
+              child: const Text('Zapisz'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteRecording(DocumentSnapshot doc) async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Usuń nagranie'),
+          content: const Text('Czy na pewno chcesz usunąć to nagranie? Tego nie można cofnąć.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Anuluj'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await FirebaseFirestore.instance
+                    .collection('video_results')
+                    .doc(doc.id)
+                    .delete();
+                if (context.mounted) Navigator.of(context).pop();
+              },
+              child: const Text('Usuń', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
     );
   }
 }
