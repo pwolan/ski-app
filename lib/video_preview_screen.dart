@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:logger/logger.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'models.dart';
+import 'skeleton_painter.dart';
 
 class VideoPreviewScreen extends StatefulWidget {
   final String docId;
@@ -265,77 +266,5 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
         );
       },
     );
-  }
-}
-
-class SkeletonOverlay extends StatelessWidget {
-  final VideoPlayerController controller;
-  final List<List<double>> sequence;
-
-  const SkeletonOverlay({super.key, required this.controller, required this.sequence});
-
-  @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: Center(
-        child: AspectRatio(
-          aspectRatio: controller.value.aspectRatio,
-          child: AnimatedBuilder(
-            animation: controller,
-            builder: (context, child) {
-              return CustomPaint(
-                painter: SkeletonPainter(
-                  currentTime: controller.value.position,
-                  totalDuration: controller.value.duration,
-                  sequence: sequence,
-                ),
-                size: Size.infinite,
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class SkeletonPainter extends CustomPainter {
-  final Duration currentTime;
-  final Duration totalDuration;
-  final List<List<double>> sequence;
-
-  SkeletonPainter({required this.currentTime, required this.totalDuration, required this.sequence});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (totalDuration.inMilliseconds == 0 || sequence.isEmpty) return;
-
-    final double progress = currentTime.inMilliseconds / totalDuration.inMilliseconds;
-    int frameIndex = (progress * (sequence.length - 1)).round();
-
-    if (frameIndex < 0) frameIndex = 0;
-    if (frameIndex >= sequence.length) frameIndex = sequence.length - 1;
-
-    final List<double> frameData = sequence[frameIndex];
-    final Paint paint = Paint()
-      ..color = Colors.red
-      ..strokeWidth = 4.0
-      ..strokeCap = StrokeCap.round;
-
-    // frameData contains 34 floats -> 17 points (x, y)
-    for (int i = 0; i < frameData.length - 1; i += 2) {
-      if (i + 1 < frameData.length) {
-        // Warning: Coordinates must be normalized 0..1 to work with * size
-        double x = frameData[i];
-        double y = frameData[i+1];
-
-        canvas.drawCircle(Offset(x * size.width, y * size.height), 4.0, paint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant SkeletonPainter oldDelegate) {
-    return oldDelegate.currentTime != currentTime;
   }
 }
