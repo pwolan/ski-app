@@ -194,7 +194,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const CameraScreen()),
+                    MaterialPageRoute(builder: (context) => CameraScreen(model: model)),
                   );
                 },
                 style: ElevatedButton.styleFrom(

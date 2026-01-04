@@ -36,33 +36,7 @@ class _RecordingsListScreenState extends State<RecordingsListScreen> {
 
       logger.i("Raw document data: ${doc.data()}");
 
-      List<dynamic> frames = data['frames'];
-      List<List<double>> sequence = [];
-
-      for (var frame in frames) {
-         if (frame is Map && frame.containsKey('points')) {
-             var points = frame['points'];
-             if (points is List) {
-                 List<double> features = points.map((e) => (e as num).toDouble()).toList();
-
-                 if (features.isEmpty) {
-                   throw Exception("Znaleziono ramkę z pustą listą punktów.");
-                 }
-
-                 sequence.add(features);
-             }
-         } else if (frame is List) {
-             List<double> features = frame.map((e) => (e as num).toDouble()).toList();
-
-             if (features.isEmpty) {
-                throw Exception("Znaleziono ramkę z pustą listą punktów.");
-             }
-
-             sequence.add(features);
-         } else {
-             logger.w("Frame structure unknown/invalid: $frame");
-         }
-      }
+      List<List<double>> sequence = MLModel.parseFrames(data);
 
       if (sequence.isEmpty) {
         throw Exception("Nie udało się sparsować żadnych ramek z danymi.");

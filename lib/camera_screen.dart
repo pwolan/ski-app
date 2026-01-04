@@ -1,12 +1,17 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
+import 'models.dart';
+import 'video_preview_screen.dart';
 
 class CameraScreen extends StatefulWidget {
-  const CameraScreen({super.key});
+  final MLModel model;
+
+  const CameraScreen({super.key, required this.model});
 
   @override
   State<CameraScreen> createState() => _CameraScreenState();
@@ -95,19 +100,44 @@ class _CameraScreenState extends State<CameraScreen> {
       final String downloadUrl = await ref.getDownloadURL();
       _logger.i("Upload complete! URL: $downloadUrl");
 
-      // MOCK PROCESSING TRIGGER
-      _logger.i("Processing video: ${ref.fullPath} - (Mock implementation)");
+      // Wait for Cloud Function to process and create document
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text('Wideo wysłane! Przetwarzanie rozpoczęte...')),
+         ScaffoldMessenger.of(context).showSnackBar(
+           const SnackBar(content: Text('Wideo wysłane! Oczekiwanie na przetworzenie...')),
+         );
+      }
+
+      String docId = fileName.split('/').last;
+
+      // Poll or listener for document creation
+      // Using snapshots().firstWhere simplifies waiting for existence
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection('video_results')
+          .doc(docId)
+          .snapshots()
+          .firstWhere((snapshot) => snapshot.exists && (snapshot.data() as Map<String, dynamic>).containsKey('frames'));
+
+      if (mounted) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        List<List<double>> sequence = MLModel.parseFrames(data);
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VideoPreviewScreen(
+              docId: docId,
+              sequence: sequence,
+              model: widget.model,
+            ),
+          ),
         );
       }
 
     } catch (e) {
-      _logger.e("Error uploading video: $e");
+      _logger.e("Error uploading/processing video: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error uploading video: $e')),
+          SnackBar(content: Text('Error: $e')),
         );
       }
     } finally {
@@ -145,7 +175,7 @@ class _CameraScreenState extends State<CameraScreen> {
                           CircularProgressIndicator(),
                           SizedBox(height: 16),
                           Text(
-                            "Wysyłanie...",
+                            "Przetwarzanie...",
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           )
                         ],
