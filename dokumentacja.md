@@ -10,51 +10,42 @@ Aplikacja służąca do predykcji techniki jazdy narciarskiej z użyciem kamery 
 ## Instrukcja obsługi
 
 ### Nagranie wideo
-1. a
+1. Z dolnego paska funkcjonalności wybieramy "Kamera", następnie klikamy przycisk "Nagraj wideo".
 
-2. b
+<img width="540" height="1070" alt="kamera" src="https://github.com/user-attachments/assets/080ef70c-52e5-452a-99c9-272423c2f3b7" />
 
-3. c
+2. W nowym widoku możemy kliknąć strzałkę w lewym górnym rogu do powrotu do poprzedniego ekranu, albo kliknąć czerwony przycisk rozpoczynający nagrywanie.
+   
+<img width="540" height="1070" alt="nagrywanie_wideo" src="https://github.com/user-attachments/assets/8870342c-c4e8-4a33-9e2a-7ccf5906df85" />
 
-4. d
+3. Klikamy ponownie czerwony przycisk aby zakończyć nagrywanie, wyświetli się powiadomienie o przetwarzaniu nagrania i zakończonym wysłaniu nagrania. Możemy wrócić do startowego widoku strzałką w lewym górnym rogu.
 
-5. e
+<img width="540" height="480" alt="wideo_wyslane" src="https://github.com/user-attachments/assets/d98dae8f-eb0b-4432-be06-f19e235fea91" />
 
 ### Podgląd wideo
-1. a
+1. Z dolnego paska funkcjonalności wybieramy "Lista nagrań", ukaże nam się lista wszystkich nagrań w aplikacji z możliwością ich usunięcia i zmiany nazwy.
 
-2. b
+<img width="540" height="1070" alt="lista_nagran" src="https://github.com/user-attachments/assets/91cf0609-a362-499e-ae26-6f1e908afbee" />
 
-3. c
+2. Wybieramy dany film przyciskiem uruchamiającym obok nazwy wybranego filmu. Zostaniemy przeniesieni do widoku podglądu danego filmu. Można w nim zobaczyć nałożony szkielet na nagranie, sterować danym nagraniem jak i zobaczyć predykcję modelu i ją edytować.
 
-4. d
-
-5. e
-
+<img width="540" height="1070" alt="podglad_nagrania" src="https://github.com/user-attachments/assets/aabb7684-fccc-4f42-9a54-0aed1001ec3f" />
 
 ### Predykcja techniki jazdy
-1. a
+1. Z dolnego paska funkcjonalności wybieramy "Lista nagrań", wybieramy konkretny film na którym chcemy uruchomić predykcję.
 
-2. b
-
-3. c
-
-4. d
-
-5. e
-
+2. W podglądzie wideo klikamy przycisk "Uruchom model". Wynik zostanie wyświetlony na ekranie.
 
 ### Wczytanie i predykcja lokalnych danych
-1. a
+1. Z dolnego paska funkcjonalności wybieramy "Analiza CSV".
+   
+<img width="1080" height="2146" alt="analiza_csv" src="https://github.com/user-attachments/assets/386b18bf-ba0d-4910-96e7-18c19114c337" />
 
-2. b
+2. Wczytujemy plik CSV przyciskiem "Wczytaj plik CSV z danymi".
 
-3. c
+3. Klikamy przycisk "Wykonaj Predykcję na danych z CSV".
 
-4. d
-
-5. e
-
+4. Wynik predykcji będzie zamieszczony na tym samym widoku.
 
 ## Uruchomienie aplikacji deweloperskiej
 
