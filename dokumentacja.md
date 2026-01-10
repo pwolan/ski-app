@@ -12,7 +12,7 @@ Aplikacja służąca do predykcji techniki jazdy narciarskiej z użyciem kamery 
 ### Nagranie wideo
 1. Z dolnego paska funkcjonalności wybieramy "Kamera", następnie klikamy przycisk "Nagraj wideo".
 
-<img width="540" height="1070" alt="kamera" src="https://github.com/user-attachments/assets/080ef70c-52e5-452a-99c9-272423c2f3b7" />
+<img width="540" height="1070" alt="nagraj_wideo" src="https://github.com/user-attachments/assets/b3693e3e-cf3c-447c-ab6e-c03e9f671378" />
 
 2. W nowym widoku możemy kliknąć strzałkę w lewym górnym rogu do powrotu do poprzedniego ekranu, albo kliknąć czerwony przycisk rozpoczynający nagrywanie.
    
@@ -24,10 +24,10 @@ Aplikacja służąca do predykcji techniki jazdy narciarskiej z użyciem kamery 
 
 ### Podgląd wideo
 1. Z dolnego paska funkcjonalności wybieramy "Lista nagrań", ukaże nam się lista wszystkich nagrań w aplikacji z możliwością ich usunięcia i zmiany nazwy.
+   
+<img width="540" height="1070" alt="lista_nagran" src="https://github.com/user-attachments/assets/f6376b1b-74c5-4025-825f-ab1599393cdf" />
 
-<img width="540" height="1070" alt="lista_nagran" src="https://github.com/user-attachments/assets/91cf0609-a362-499e-ae26-6f1e908afbee" />
-
-2. Wybieramy dany film przyciskiem uruchamiającym obok nazwy wybranego filmu. Zostaniemy przeniesieni do widoku podglądu danego filmu. Można w nim zobaczyć nałożony szkielet na nagranie, sterować danym nagraniem jak i zobaczyć predykcję modelu i ją edytować.
+3. Wybieramy dany film przyciskiem uruchamiającym obok nazwy wybranego filmu. Zostaniemy przeniesieni do widoku podglądu danego filmu. Można w nim zobaczyć nałożony szkielet na nagranie, sterować danym nagraniem jak i zobaczyć predykcję modelu i ją edytować.
 
 <img width="540" height="1070" alt="podglad_nagrania" src="https://github.com/user-attachments/assets/aabb7684-fccc-4f42-9a54-0aed1001ec3f" />
 
@@ -38,8 +38,8 @@ Aplikacja służąca do predykcji techniki jazdy narciarskiej z użyciem kamery 
 
 ### Wczytanie i predykcja lokalnych danych
 1. Z dolnego paska funkcjonalności wybieramy "Analiza CSV".
-   
-<img width="540" height="1070" alt="analiza_csv" src="https://github.com/user-attachments/assets/386b18bf-ba0d-4910-96e7-18c19114c337" />
+
+<img width="540" height="1070" alt="analiza_csv" src="https://github.com/user-attachments/assets/641c0fc5-87b8-4f22-b877-4f8bb14b7297" />
 
 2. Wczytujemy plik CSV przyciskiem "Wczytaj plik CSV z danymi".
 
