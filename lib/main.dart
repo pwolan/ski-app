@@ -25,7 +25,7 @@ class SkiApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Ski Technique Analyzer',
+      title: 'SkiCapture',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const HomePage(),
       debugShowCheckedModeBanner: false,
@@ -218,7 +218,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Analiza Techniki Jazdy Na Nartach"),
+        title: const Text("SkiCapture"),
         centerTitle: true,
       ),
       body: page,
