@@ -39,7 +39,7 @@ Aplikacja służąca do predykcji techniki jazdy narciarskiej z użyciem kamery 
 ### Wczytanie i predykcja lokalnych danych
 1. Z dolnego paska funkcjonalności wybieramy "Analiza CSV".
    
-<img width="1080" height="2146" alt="analiza_csv" src="https://github.com/user-attachments/assets/386b18bf-ba0d-4910-96e7-18c19114c337" />
+<img width="540" height="1070" alt="analiza_csv" src="https://github.com/user-attachments/assets/386b18bf-ba0d-4910-96e7-18c19114c337" />
 
 2. Wczytujemy plik CSV przyciskiem "Wczytaj plik CSV z danymi".
 
