@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'models.dart';
-import 'video_preview_screen.dart';
+
 
 class CameraScreen extends StatefulWidget {
   final MLModel model;
@@ -100,37 +100,10 @@ class _CameraScreenState extends State<CameraScreen> {
       final String downloadUrl = await ref.getDownloadURL();
       _logger.i("Upload complete! URL: $downloadUrl");
 
-      // Wait for Cloud Function to process and create document
       if (mounted) {
          ScaffoldMessenger.of(context).showSnackBar(
-           const SnackBar(content: Text('Wideo wysłane! Oczekiwanie na przetworzenie...')),
+           const SnackBar(content: Text('Wideo wysłane! Będzie dostępne na liście nagrań po przetworzeniu.')),
          );
-      }
-
-      String docId = fileName.split('/').last;
-
-      // Poll or listener for document creation
-      // Using snapshots().firstWhere simplifies waiting for existence
-      DocumentSnapshot doc = await FirebaseFirestore.instance
-          .collection('video_results')
-          .doc(docId)
-          .snapshots()
-          .firstWhere((snapshot) => snapshot.exists && (snapshot.data() as Map<String, dynamic>).containsKey('frames'));
-
-      if (mounted) {
-        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-        List<List<double>> sequence = MLModel.parseFrames(data);
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => VideoPreviewScreen(
-              docId: docId,
-              sequence: sequence,
-              model: widget.model,
-            ),
-          ),
-        );
       }
 
     } catch (e) {
